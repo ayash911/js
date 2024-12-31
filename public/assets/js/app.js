@@ -1,6 +1,42 @@
 (function () {
-  function game() {
-    let bankValue = 1000;
+  function game(balance, user) {
+    function updateBalance(isAdd, amt) {
+      const username = user;
+
+      if (typeof amt !== "number" || amt <= 0) {
+        alert("Invalid amount");
+        return;
+      }
+
+      fetch("/update-balance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          amount: amt,
+          isAdd: isAdd,
+        }),
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            return response.json().then((data) => {
+              throw new Error(data.message);
+            });
+          }
+        })
+        .then((data) => {
+          alert(data.message);
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    }
+
+    let bankValue = balance;
     let currentBet = 0;
     let wager = 5;
     let lastWager = 0;
@@ -710,6 +746,7 @@
 
       if (winValue > 0) {
         // Winning notification
+        updateBalance(1, winValue);
         let nsnumber = document.createElement("span");
         nsnumber.setAttribute("class", "nsnumber");
         nsnumber.style.cssText = numRed.includes(winningSpin)
@@ -738,6 +775,7 @@
         nsWin.append(nsWinBlock);
         nSpan.append(nsWin);
       } else {
+        updateBalance(0, betTotal);
         let nsnumber = document.createElement("span");
         nsnumber.setAttribute("class", "nsnumber");
         nsnumber.style.cssText = "color:black";
@@ -850,7 +888,6 @@
       }
     }
   } // Wait until the DOM is loaded to attach event listeners
-
   document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("login-btn").addEventListener("click", login);
     document.getElementById("signup-btn").addEventListener("click", signup);
@@ -858,8 +895,8 @@
 
   // Login function
   function login() {
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
+    var username = document.getElementById("username").value.trim();
+    var password = document.getElementById("password").value.trim();
 
     if (!username || !password) {
       alert("Username and password are required.");
@@ -875,21 +912,29 @@
     })
       .then((response) => {
         if (response.ok) {
-          alert("Login successful");
-          document.getElementById("login-form").style.display = "none";
-          document.getElementById("signup-form").style.display = "none";
-          game(); // Redirect to the index page after successful login
+          return response.json();
         } else {
-          response.text().then((text) => alert(text)); // Alert error message
+          return response.json().then((data) => {
+            throw new Error(data.message);
+          });
         }
       })
-      .catch((error) => console.log(error));
+      .then((data) => {
+        alert(`${data.message}. Your balance is $${data.balance}`);
+        document.getElementById("login-form").style.display = "none";
+        document.getElementById("signup-form").style.display = "none";
+        game(data.balance, username);
+        // Proceed to game or next step
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   // Signup function
   function signup() {
-    var newUsername = document.getElementById("new-username").value;
-    var newPassword = document.getElementById("new-password").value;
+    const newUsername = document.getElementById("new-username").value.trim();
+    const newPassword = document.getElementById("new-password").value.trim();
 
     if (!newUsername || !newPassword) {
       alert("Please fill in both fields");
@@ -905,24 +950,32 @@
     })
       .then((response) => {
         if (response.ok) {
-          alert("Signup successful");
+          alert("Signup successful. You can now log in.");
           showLoginForm(); // Show the login form after successful signup
         } else {
-          response.text().then((text) => alert(text)); // Alert error message
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
         }
       })
-      .catch((error) => alert("Error signing up"));
-  }
-
-  // Show Signup form
-  function showSignupForm() {
-    document.getElementById("login-form").style.display = "none";
-    document.getElementById("signup-form").style.display = "block";
-  }
-
-  // Show Login form
-  function showLoginForm() {
-    document.getElementById("signup-form").style.display = "none";
-    document.getElementById("login-form").style.display = "block";
+      .catch((error) => {
+        if (error.message == "Username already exists") {
+          alert("User Already Exists Please Login");
+          showLoginForm();
+        }
+        console.log(error.message); // Display the error message
+      });
   }
 })();
+
+// Show Signup form
+function showSignupForm() {
+  document.getElementById("login-form").style.display = "none";
+  document.getElementById("signup-form").style.display = "block";
+}
+
+// Show Login form
+function showLoginForm() {
+  document.getElementById("signup-form").style.display = "none";
+  document.getElementById("login-form").style.display = "block";
+}
