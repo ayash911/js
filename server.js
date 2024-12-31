@@ -12,19 +12,20 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// MySQL database connection
-const db = mysql.createConnection({
-  host: process.env.DB_HOST, // Use the environment variable for the host
-  user: process.env.DB_USER, // MySQL username
-  password: process.env.DB_PASSWORD, // MySQL password
-  database: process.env.DB_NAME, // Database name
+const { Client } = require('pg');
+
+const client = new Client({
+  host: process.env.DB_HOST,      // Use the environment variable for the host
+  user: process.env.DB_USER,      // PostgreSQL username
+  password: process.env.DB_PASSWORD, // PostgreSQL password
+  database: process.env.DB_NAME,  // PostgreSQL database name
+  port: process.env.PORT || 5432, // Default PostgreSQL port (you can skip this line if you're using the default port)
 });
 
+client.connect()
+  .then(() => console.log("Connected to PostgreSQL Database"))
+  .catch((err) => console.error("Error connecting to PostgreSQL", err.stack));
 
-db.connect((err) => {
-  if (err) throw err;
-  console.log("Connected to MySQL Database");
-});
 
 // User Signup Route
 app.post("/signup", (req, res) => {
