@@ -15,7 +15,7 @@ body {
 /* Body and general styling */
 body {
   font-family: Arial, sans-serif;
-  background-color: #f4f7f6;
+  background: linear-gradient(135deg, #c31354, #c30ec9, #db7d11);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -52,11 +52,17 @@ input[type="password"] {
   font-size: 16px;
 }
 
+#topup{
+  margin-left: 10%;
+}
+#logout{
+  margin-right: 10%;
+}
 /* Button styling */
 button {
-  width: 100%;
+  width: 170px;
   padding: 10px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
@@ -73,11 +79,19 @@ p {
   font-size: 14px;
 }
 
-button, a {
+h1 {
+  color: white;
+  display: flex;
+  flex-direction: row;
+}
+
+button,
+a {
   text-decoration: none;
-  color: #af4c4c;
+  color: white;
   font-weight: bold;
   cursor: pointer;
+  margin: auto;
 }
 
 /* Adjustments for mobile responsiveness */
@@ -87,6 +101,44 @@ button, a {
   }
 }
 
+#header-container {
+  display: flex;
+  margin-bottom: 20px;
+  width: 80%;
+  justify-content: center;
+  align-items: center;
+  background-color: #1c1c1c;
+  padding: 10px;
+  border: 2px solid #ffd700;
+}
+
+h1 {
+  color: white;
+  font-size: 2.5rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+button.tbs {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 0 10px;
+  padding: 5px 15px;
+  font-size: 1rem;
+  background-color: #c31354;
+  border: 2px solid #ffd700;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+button.tbs:hover {
+  background-color: #c30ec9;
+  transform: scale(1.1);
+}
 
 #container {
   display: flex;
@@ -154,9 +206,7 @@ button, a {
   padding-left: 40px;
   padding-right: 40px;
 }
-/*notification end*/
 
-/*betting table*/
 #betting_board {
   width: 500px;
   height: 315px;
@@ -472,7 +522,6 @@ button, a {
   margin-left: -1px;
 }
 
-
 #pnContent {
   border: 4px solid #d5b714;
   width: 485px;
@@ -485,32 +534,29 @@ button, a {
   color: #000;
   overflow-x: auto;
   overflow-y: hidden;
-  direction: rtl; /* Reverse direction for scroll bar on top */
+  direction: rtl;
 }
 
 #pnContent > * {
-  direction: ltr; /* Keep the content left-to-right inside */
+  direction: ltr;
 }
 
-/* Custom Scrollbar */
 #pnContent::-webkit-scrollbar {
-  height: 8px; /* Adjust the height of the scrollbar */
+  height: 8px;
 }
 
 #pnContent::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Background of the scrollbar track */
+  background: #f1f1f1;
 }
 
 #pnContent::-webkit-scrollbar-thumb {
-  background: #d5b714; /* Scrollbar thumb color */
-  border-radius: 4px; /* Rounded scrollbar */
+  background: #5b14d5;
+  border-radius: 4px;
 }
 
 #pnContent::-webkit-scrollbar-thumb:hover {
-  background: #bca10f; /* Darker color on hover */
+  background: #3607de;
 }
-
-
 
 .pnRed,
 .pnBlack,
@@ -978,7 +1024,6 @@ button, a {
 }
 /*chip end*/
 
-
-.ttbbetblock{
+.ttbbetblock {
   cursor: pointer;
 }

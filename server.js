@@ -115,7 +115,6 @@ app.post("/update-balance", (req, res) => {
   });
 });
 
-
 // Save Spin Result
 app.post("/save-spin", (req, res) => {
   const { winningNumber } = req.body;
@@ -144,6 +143,35 @@ app.get("/spin-history", (req, res) => {
       return res.status(500).send("Error retrieving spin history.");
     }
     res.status(200).json(results);
+  });
+});
+
+
+app.post("/get-balance", (req, res) => {
+  console.log("Request received at /get-balance");
+  console.log("Request body:", req.body);
+
+  const { username } = req.body;
+
+  if (!username) {
+    console.error("No username provided");
+    return res.status(400).json({ message: "Username is required" });
+  }
+
+  const query = "SELECT balance FROM users WHERE username = ?";
+  db.query(query, [username], (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ message: "Error retrieving balance" });
+    }
+
+    if (result.length === 0) {
+      console.error("User not found");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log("Balance retrieved:", result[0].balance);
+    res.status(200).json({ balance: result[0].balance });
   });
 });
 

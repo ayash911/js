@@ -7,8 +7,11 @@
     <link rel="stylesheet" href="/assets/css/style.css" />
   </head>
   <body>
-    <h1>ROULETTE GAME</h1>
-    <!-- Login Form -->
+    <div id="header-container">
+      <h1 id="game-title">ROULETTE GAME</h1>
+    </div>
+
+
     <div id="login-form" class="form-container">
       <h2>Login</h2>
       <input type="text" id="username" placeholder="Username" required />
@@ -19,12 +22,15 @@
         <button onclick="showSignupForm()">Sign up</button>
       </p>
     </div>
-
-    <!-- Signup Form -->
-    <div id="signup-form" class="form-container" style="display: none;">
+    <div id="signup-form" class="form-container" style="display: none">
       <h2>Sign Up</h2>
       <input type="text" id="new-username" placeholder="Username" required />
-      <input type="password" id="new-password" placeholder="Password" required />
+      <input
+        type="password"
+        id="new-password"
+        placeholder="Password"
+        required
+      />
       <button id="signup-btn">Sign Up</button>
       <p>
         Already have an account?

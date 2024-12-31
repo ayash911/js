@@ -1,14 +1,89 @@
 (function () {
+  let betTotal = 0;
+
   function game(balance, user) {
+    let isLoggedIn = true;
+    
+    if (isLoggedIn) {
+      function getBalance(user) {
+        return fetch("/get-balance", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: user }),
+        })
+          .then((response) => {
+            console.log("Response status:", response.status);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Fetched balance:", data.balance);
+            return data.balance; // Return balance to the caller
+          })
+          .catch((err) => {
+            console.error("Fetch error:", err.message);
+            alert("Error fetching balance: " + err.message);
+            return 0; // Default to 0 in case of an error
+          });
+      }
+      
+      // Create Logout Button
+      const logoutButton = document.createElement("button");
+      logoutButton.className = "tbs";
+      logoutButton.id = "logout";
+      logoutButton.textContent = "Logout";
+      logoutButton.onclick = function () {
+        alert("Logging out...");
+        location.reload();
+      };
+
+      // Create Topup Button
+      const topupButton = document.createElement("button");
+      topupButton.className = "tbs";
+      topupButton.id = "topup";
+      topupButton.textContent = "Topup";
+      topupButton.onclick = async function () {
+        const fetchedAmount = await getBalance(user); 
+        console.log("Fetched amount:", fetchedAmount);
+      
+        if (fetchedAmount <= 10) {
+          await updateBalance(true, 1000); 
+          console.log("Balance is updated");
+          location.reload();
+        } else {
+          alert("Balance is sufficient:", fetchedAmount);
+        }
+      };
+      
+
+      // Append Buttons to Header
+      const header = document.getElementById("header-container");
+      const title = document.getElementById("game-title");
+      header.insertBefore(logoutButton, title);
+      header.appendChild(topupButton);
+    } else {
+      // Hide the title if not logged in
+      document.getElementById("header-container").style.display = "none";
+    }
+
     function updateBalance(isAdd, amt) {
       const username = user;
-
+    
       if (typeof amt !== "number" || amt <= 0) {
-        alert("Invalid amount");
+        alert("Invalid amount. Please enter a positive number.");
         return;
       }
-
-      fetch("/update-balance", {
+    
+      if (typeof isAdd !== "boolean") {
+        alert("Invalid operation type. Use true for add or false for subtract.");
+        return;
+      }
+    
+      return fetch("/update-balance", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -23,18 +98,22 @@
           if (response.ok) {
             return response.json();
           } else {
+            // Extract error message from the response
             return response.json().then((data) => {
               throw new Error(data.message);
             });
           }
         })
         .then((data) => {
-          console.log(data.message);
+          console.log("Server response:", data.message);
+          alert("Balance updated successfully!");
         })
         .catch((error) => {
-          alert(error.message);
+          console.error("Error updating balance:", error.message);
+          alert(`Failed to update balance: ${error.message}`);
         });
     }
+    
     function saveSpin(winningSpin) {
       fetch("/save-spin", {
         method: "POST",
@@ -85,7 +164,6 @@
     }
 
     // Call loadSpinHistory when the game loads
-   
 
     let bankValue = balance;
     let currentBet = 0;
@@ -112,7 +190,7 @@
     let ballTrack = document.getElementsByClassName("ballTrack")[0];
 
     function resetGame() {
-      bankValue = 1000;
+      bankValue = 0;
       currentBet = 0;
       wager = 5;
       bet = [];
@@ -743,7 +821,6 @@
     function spin() {
       var winningSpin = Math.floor(Math.random() * 37);
       let winValue = 0;
-      let betTotal = 0;
 
       var container = document.querySelector("#container");
       container.style.cursor = "not-allowed";
@@ -775,17 +852,17 @@
         document.getElementById("betSpan").innerText =
           "" + currentBet.toLocaleString("en-GB") + "";
 
-          let pnClass = numRed.includes(winningSpin)
-            ? "pnRed"
-            : winningSpin == 0
-            ? "pnGreen"
-            : "pnBlack";
-          let pnContent = document.getElementById("pnContent");
-          let pnSpan = document.createElement("span");
-          pnSpan.setAttribute("class", pnClass);
-          pnSpan.innerText = winningSpin;
-          pnContent.prepend(pnSpan);
-          pnContent.scrollright = pnContent.scrollWidth;
+        let pnClass = numRed.includes(winningSpin)
+          ? "pnRed"
+          : winningSpin == 0
+          ? "pnGreen"
+          : "pnBlack";
+        let pnContent = document.getElementById("pnContent");
+        let pnSpan = document.createElement("span");
+        pnSpan.setAttribute("class", pnClass);
+        pnSpan.innerText = winningSpin;
+        pnContent.prepend(pnSpan);
+        pnContent.scrollright = pnContent.scrollWidth;
 
         bet = [];
         numbersBet = [];
