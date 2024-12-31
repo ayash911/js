@@ -12,11 +12,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // MySQL database connection
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root", 
-  password: "1234", 
-  database: "rouletteDB",
+  host: process.env.DB_HOST, // Use the environment variable for the host
+  user: process.env.DB_USER, // MySQL username
+  password: process.env.DB_PASSWORD, // MySQL password
+  database: process.env.DB_NAME, // Database name
 });
+
 
 db.connect((err) => {
   if (err) throw err;
