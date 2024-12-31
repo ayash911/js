@@ -116,6 +116,38 @@ app.post("/update-balance", (req, res) => {
 });
 
 
+// Save Spin Result
+app.post("/save-spin", (req, res) => {
+  const { winningNumber } = req.body;
+
+  if (winningNumber === undefined) {
+    return res.status(400).send("Winning number is required.");
+  }
+
+  const query = "INSERT INTO spin_history (winning_number) VALUES (?)";
+  db.query(query, [winningNumber], (err, result) => {
+    if (err) {
+      console.error("Error saving spin result:", err);
+      return res.status(500).send("Error saving spin result.");
+    }
+    res.status(201).send("Spin result saved.");
+  });
+});
+
+
+// Retrieve Spin History
+app.get("/spin-history", (req, res) => {
+  const query = "SELECT * FROM spin_history ORDER BY spin_time DESC LIMIT 50"; // Retrieve the last 50 spins
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error retrieving spin history:", err);
+      return res.status(500).send("Error retrieving spin history.");
+    }
+    res.status(200).json(results);
+  });
+});
+
+
 // Start server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

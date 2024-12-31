@@ -35,6 +35,57 @@
           alert(error.message);
         });
     }
+    function saveSpin(winningSpin) {
+      fetch("/save-spin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ winningNumber: winningSpin }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            return response.text().then((text) => {
+              throw new Error(text);
+            });
+          }
+          console.log("Spin saved successfully.");
+        })
+        .catch((error) => console.error("Error saving spin:", error));
+    }
+
+    function loadSpinHistory() {
+      fetch("/spin-history")
+        .then((response) => {
+          if (!response.ok) {
+            return response.text().then((text) => {
+              throw new Error(text);
+            });
+          }
+          return response.json();
+        })
+        .then((data) => {
+          const pnContent = document.getElementById("pnContent");
+          console.log(data);
+          pnContent.innerHTML = ""; // Clear existing history
+          data.forEach((spin) => {
+            const pnClass = numRed.includes(spin.winning_number)
+              ? "pnRed"
+              : spin.winning_number == 0
+              ? "pnGreen"
+              : "pnBlack";
+
+            const pnSpan = document.createElement("span");
+            pnSpan.setAttribute("class", pnClass);
+            pnSpan.innerText = spin.winning_number;
+            pnContent.append(pnSpan);
+          });
+        })
+        .catch((error) => console.error("Error loading spin history:", error));
+    }
+
+    // Call loadSpinHistory when the game loads
+   
 
     let bankValue = balance;
     let currentBet = 0;
@@ -75,6 +126,7 @@
     function startGame() {
       buildWheel();
       buildBettingBoard();
+      loadSpinHistory();
     }
 
     function gameOver() {
@@ -691,6 +743,8 @@
       var winningSpin = Math.floor(Math.random() * 37);
       let winValue = 0;
       let betTotal = 0;
+
+      saveSpin(winningSpin);
 
       spinWheel(winningSpin);
 
