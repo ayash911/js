@@ -96,6 +96,7 @@ button, a {
   width: 95%;
   padding: 20px;
   color: #fff;
+  border-radius: 20px;
 }
 
 /*notification*/
@@ -466,23 +467,50 @@ button, a {
   position: absolute;
   border: 1px solid;
   width: 500px;
-  height: 45px;
+  height: 66px;
   margin-top: 10px;
   margin-left: -1px;
 }
 
+
 #pnContent {
   border: 4px solid #d5b714;
   width: 485px;
-  height: 31px;
+  height: 51px;
   position: relative;
   display: block;
   margin-left: 4px;
   margin-top: 3px;
   background-color: #fff;
   color: #000;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  direction: rtl; /* Reverse direction for scroll bar on top */
 }
+
+#pnContent > * {
+  direction: ltr; /* Keep the content left-to-right inside */
+}
+
+/* Custom Scrollbar */
+#pnContent::-webkit-scrollbar {
+  height: 8px; /* Adjust the height of the scrollbar */
+}
+
+#pnContent::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Background of the scrollbar track */
+}
+
+#pnContent::-webkit-scrollbar-thumb {
+  background: #d5b714; /* Scrollbar thumb color */
+  border-radius: 4px; /* Rounded scrollbar */
+}
+
+#pnContent::-webkit-scrollbar-thumb:hover {
+  background: #bca10f; /* Darker color on hover */
+}
+
+
 
 .pnRed,
 .pnBlack,
@@ -949,3 +977,8 @@ button, a {
   margin-top: -25px;
 }
 /*chip end*/
+
+
+.ttbbetblock{
+  cursor: pointer;
+}

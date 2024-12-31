@@ -29,7 +29,7 @@
           }
         })
         .then((data) => {
-          alert(data.message);
+          console.log(data.message);
         })
         .catch((error) => {
           alert(error.message);
@@ -121,6 +121,7 @@
       document.getElementById("betting_board").remove();
       document.getElementById("notification").remove();
       buildBettingBoard();
+      loadSpinHistory();
     }
 
     function startGame() {
@@ -744,6 +745,10 @@
       let winValue = 0;
       let betTotal = 0;
 
+      var container = document.querySelector("#container");
+      container.style.cursor = "not-allowed";
+      container.style.pointerEvents = "none";
+
       saveSpin(winningSpin);
 
       spinWheel(winningSpin);
@@ -770,21 +775,24 @@
         document.getElementById("betSpan").innerText =
           "" + currentBet.toLocaleString("en-GB") + "";
 
-        let pnClass = numRed.includes(winningSpin)
-          ? "pnRed"
-          : winningSpin == 0
-          ? "pnGreen"
-          : "pnBlack";
-        let pnContent = document.getElementById("pnContent");
-        let pnSpan = document.createElement("span");
-        pnSpan.setAttribute("class", pnClass);
-        pnSpan.innerText = winningSpin;
-        pnContent.append(pnSpan);
-        pnContent.scrollLeft = pnContent.scrollWidth;
+          let pnClass = numRed.includes(winningSpin)
+            ? "pnRed"
+            : winningSpin == 0
+            ? "pnGreen"
+            : "pnBlack";
+          let pnContent = document.getElementById("pnContent");
+          let pnSpan = document.createElement("span");
+          pnSpan.setAttribute("class", pnClass);
+          pnSpan.innerText = winningSpin;
+          pnContent.prepend(pnSpan);
+          pnContent.scrollright = pnContent.scrollWidth;
 
         bet = [];
         numbersBet = [];
         removeChips();
+
+        container.style.cursor = "default";
+        container.style.pointerEvents = "auto";
         wager = lastWager;
         if (bankValue == 0 && currentBet == 0) {
           gameOver();
@@ -981,6 +989,7 @@
         // Proceed to game or next step
       })
       .catch((error) => {
+        alert(error.message);
         console.log(error);
       });
   }
